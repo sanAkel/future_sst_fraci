@@ -17,9 +17,9 @@
  3. :negative_squared_cross_mark: Script to create _future_ SST, ice for 15-days into _future_ from any user input day.
 
  ## Different approaches:
-  - Persist anomaly of today into future (ECMWF, Kristian Mogensen): $x(t_{k+d}) = \bar{x}(t_{k+d}) + \delta x(t_k), $ for $d= 1, 15.$
-  - Project from past 15-days anomlaies into future: $x(t_{k+d}) = \bar{x}(t_{k+d}) + \delta x(t_{k-d}), $ for $d= 1, 15.$
-  - _Present_ (Dec 2023) GEOS FP: $x(t_{k+d}) = x(t_{k}) + \alpha \, \delta x(t_{k-d}), $ for $d= 1, 15, \, \alpha=0.$ 
+  - Persist anomaly of today into future (ECMWF, Kristian Mogensen): $x(t_{k+d}) = \bar{x}(t_{k+d}) + \delta x(t_k)$ for $d= 1, \ldots, 15.$
+  - Project from past 15-days anomlaies into future: $x(t_{k+d}) = \bar{x}(t_{k+d}) + \delta x(t_{k-d})$ for $d= 1, \ldots, 15.$
+  - _Present_ (Dec 2023) GEOS FP: $x(t_{k+d}) = x(t_{k}) + \alpha \times \delta x(t_{k-d})$ for $d= 1, \ldots, 15; \alpha=0.$ 
 
 # SA and RT: Metric _Test_ above approaches
 1. Differences (time-series) RMSE over 15-days $\alpha$ versus RMSE for different choices of (above) methods and $\alpha,$ RMSE is with respect to _real_ SST.
