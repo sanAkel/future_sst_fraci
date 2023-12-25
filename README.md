@@ -13,7 +13,7 @@
   
   - Remarks:
     1. Which of the two approaches is _better_? (We need comparisons with observations: RT)
-    2. Given the overall plan of using coupled model (ocean model) and relax to SST, we should switch to interpolated data- use we ESMF and
+    2. Given the overall plan of using coupled model (ocean model) and relax to SST, we should switch to interpolated data- that way we use ESMF and
        _some_ day this step can be done on-line (on the fly; Ben connection: when we get there). Relaxation can be interpreted as on _operator_...
 
 - gen_daily_clim/
