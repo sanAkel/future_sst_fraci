@@ -26,3 +26,8 @@ ${GEOSDIR}/build/bin/extract_daily_sst_ice.x 2023 1 5
 # to plot diff: conservative (xesmf) - binned bcs
 # first generate regridding weights: gen_wts_regrid_ostia_geos.py
 plot_diff_ostia_native_regridded_binned.py 20230105
+
+
+# to generate daily climatology
+source $NOBACKUP/geosMom6/v11.1.1/GEOSgcm/@env/g5_modules
+$NOBACKUP/geosMom6/v11.1.1/GEOSgcm/build/bin/cal_daily_clim.x 2007 2023 2 29
