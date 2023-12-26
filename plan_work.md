@@ -30,10 +30,12 @@
 1. Differences (time-series) RMSE over 15-days $\alpha$ versus RMSE for different choices of (above) methods and $\alpha,$ RMSE is with respect to _real_ SST.
 
 # RT:
-1. Control _as usual_ (real SST/ICE). Run experiment for a month, forecasts, etc.
-2. Forecast with persisted SST/ICE as in GMAO OPS.
-3. Repeat forecats by swapping persisted SST/ICE data with **new options** $\alpha$ (parameter).
-4. Repeat above 1 (cycling DA) and 2 by swapping _real_ data with _climatological_ data.
+- Forecast experiments:
+   1. Control _as usual_ with real SST/ICE, in _hindcast_ **mode** (one month).
+   2. Repeat with persisted SST/ICE as in _forecast_ mode, as done by the GMAO OPS.
+   3. Repeat by swapping persisted SST/ICE data with **new options** $\alpha$ (parameter).
+- Cycling DA experiments:
+  1. (TBD) Swap _real_ data with _climatological_ data?
 
 # SA:
 1. Coupled set as RT's, relaxing ocean model SST to _real_ and _climatological_ data.
