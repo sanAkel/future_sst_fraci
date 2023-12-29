@@ -31,9 +31,9 @@
 
 # RT:
 - Forecast experiments:
-   1. Control _as usual_ with real SST/ICE, in _hindcast_ **mode** (one month).
-   2. Repeat with persisted SST/ICE as in _forecast_ mode, as done by the GMAO OPS.
-   3. Repeat by swapping persisted SST/ICE data with **new options** $\alpha$ (parameter).
+   1. Control with **real** SST/ICE, in **hindcast** mode (one month).
+   2. Repeat with **persisted** SST/ICE in **forecast** mode (also one month), as done by the GMAO OPS.
+   3. Repeat by swapping persisted SST/ICE data with **new options**, for example, using $\alpha$ (parameter).
 - Cycling DA experiments:
   1. (TBD) Swap _real_ data with _climatological_ data?
 
