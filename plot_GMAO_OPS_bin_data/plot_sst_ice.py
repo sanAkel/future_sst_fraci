@@ -26,11 +26,11 @@ def apply_land_sea_mask(ds_in, ls_mask):
 ls_mask = xr.open_dataset("/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/diff_binned_interpolate/data/mask_geos_bcs.nc")
 
 # Pick a binned 1/8 deg grid file
-ds_geos = xr.open_dataset("sst_fraci_20230101.nc4").squeeze()
+ds_geos = xr.open_dataset("data/" + "sst_fraci_20230101.nc4").squeeze()
 ds_masked = apply_land_sea_mask(ds_geos, ls_mask)
 
 # lagged difference
-dss = xr.open_mfdataset("sst_fraci_*.nc4")
+dss = xr.open_mfdataset("data/" + "sst_fraci_*.nc4")
 dss_masked = apply_land_sea_mask(dss, ls_mask)
 #(dss_masked.isel(time=1)-dss_masked.isel(time=0)).masked_sst.mean(('lat', 'lon')).values
 
