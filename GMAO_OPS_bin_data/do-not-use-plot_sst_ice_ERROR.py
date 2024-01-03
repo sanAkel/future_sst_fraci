@@ -23,7 +23,7 @@ def apply_land_sea_mask(ds_in, ls_mask):
 #----
 
 # read land sea mask. Was created using `gen_daily_clim/make_land_sea_mask.py`
-ls_mask = xr.open_dataset("/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/diff_binned_interpolate/data/mask_geos_bcs.nc")
+ls_mask = xr.open_dataset("/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/gen_daily_clim/data/mask_geos_bcs.nc")
 
 # Pick a binned 1/8 deg grid file
 ds_geos = xr.open_dataset("data/" + "sst_fraci_20230101.nc4").squeeze()
@@ -36,14 +36,19 @@ dss_masked = apply_land_sea_mask(dss, ls_mask)
 
 nT=11
 dSST_mean = np.zeros((nT,), dtype=np.float64)
-dICE_mean = np.zeros_like( dSST)
-dSST_rmse = np.zeros_like( dSST)
-dICE_rmse = np.zeros_like( dSST)
+dICE_mean = np.zeros_like( dSST_mean)
+dSST_rmse = np.zeros_like( dSST_mean)
+dICE_rmse = np.zeros_like( dSST_mean)
 for id in range(0, nT):
   dx = (dss_masked.isel(time=id)-dss_masked.isel(time=0))
   dSST_mean[id] = dx.masked_sst.mean(('lat', 'lon')).values
   dICE_mean[id] = dx.masked_ice.mean(('lat', 'lon')).values
   dSST_rmse[id] = np.sqrt( (dx.masked_sst**2).mean(('lat', 'lon')).values)
   dICE_rmse[id] = np.sqrt( (dx.masked_ice**2).mean(('lat', 'lon')).values)
+
+#print(dSST_mean)
+#print(dICE_mean)
+#print(dSST_rmse)
+#print(dICE_rmse)
 
 #plt.subplot(221), plt.plot(range(0, 11), dSST_mean, 'b.-')
