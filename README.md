@@ -18,7 +18,7 @@
 
 - gen_daily_clim/
 
-  - Used for generating daily climatology, see script: get_daily_clim.py
+  - Used for generating daily climatology, see script: [get_daily_clim_or_data.py](https://github.com/sanAkel/future_sst_fraci/blob/main/gen_daily_clim/get_daily_clim_or_data.py)
   - You need `cal_daily_clim.x` to be built, available from GEOS-ESM/GEOS_Util, 
     source code: `daily_clim_SST_FRACI_eight.F90`
 
