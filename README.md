@@ -31,7 +31,8 @@
   - Are yearly files, whereas we are working with daily data.
  
   Therefore we need `extract_daily_sst_ice.x` to be built, available from GEOS-ESM/GEOS_Util, source code: `extract_day_SST_FRACI_eight.F90`.
-  Example usage: `extract_daily_sst_ice.x 2023 2 1`
+  Example usage: `extract_daily_sst_ice.x 2023 2 1 .false.`
+
   When it finishes clean, you will get a single netcdf file containing both SST and Ice concentation for your date of choice (e.g., `sst_ice_20230201.nc`).
 
   [plot_sst_ERROR.py](https://github.com/sanAkel/future_sst_fraci/blob/main/GMAO_OPS_bin_data/plot_sst_ERROR.py):
