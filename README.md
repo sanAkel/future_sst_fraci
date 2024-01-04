@@ -38,6 +38,6 @@
   Apply the [land-sea mask generating using this](https://github.com/sanAkel/future_sst_fraci/blob/main/gen_daily_clim/make_clean_land_sea_mask.ipynb) and calculate differences.
 
   **Note**: 
-    Plot using grads: plot_{xx}.ctl, xx=sst, ice are provided in case you insist on working with binary data. Above `extract_day_SST_FRACI_eight.F90`
-    can be modified to write out daily data in binary format, see source code <-- uncomment `CALL write_bin(...)` and recompile.
-    (For plotting) I support nothing other than python.
+    1. Above `extract_day_SST_FRACI_eight.F90` can write out daily data in binary format, example usage: `extract_daily_sst_ice.x 2023 1 1 .true.`
+    2. Plot using grads: plot_{xx}.ctl, xx=sst, ice are provided in case one insists on working with binary data. (For plotting) I support nothing other than python and netcdf.
+    
