@@ -22,7 +22,7 @@ if (which_exec == 'daily_clim'):
 else:
   to_exec = path_to_bin + "extract_daily_sst_ice.x"
 # x0049 (summer)
-  dummy_dates = pd.date_range(start='7/1/2023', end='10/1/2023', freq='D')
+  dummy_dates = pd.date_range(start='6/1/2021', end='10/1/2021', freq='D')
 #~~~~~~~~~~~~~
 
 if (which_exec == 'daily_clim'):
@@ -49,5 +49,5 @@ else:
        print("Error running:")
        sys.exit(cmd)
      else:
-       os.system('/bin/mv *.nc  data/')
-       os.system('/bin/mv *.bin data/')
+       os.system('/bin/mv *.nc  /discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/GMAO_OPS_bin_data/data/{}/'.format(dummy_dates[0].year))
+       os.system('/bin/mv *.bin /discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/GMAO_OPS_bin_data/data/{}/'.format(dummy_dates[0].year))
