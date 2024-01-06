@@ -22,7 +22,7 @@ if (which_exec == 'daily_clim'):
 else:
   to_exec = path_to_bin + "extract_daily_sst_ice.x"
 # x0049 (summer)
-  dummy_dates = pd.date_range(start='6/1/2021', end='10/1/2021', freq='D')
+  dummy_dates = pd.date_range(start='6/1/2017', end='10/1/2017', freq='D')
 #~~~~~~~~~~~~~
 
 if (which_exec == 'daily_clim'):

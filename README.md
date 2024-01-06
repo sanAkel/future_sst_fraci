@@ -16,7 +16,7 @@
     2. Given the overall plan of using coupled model (ocean model) and relax to SST, we should switch to interpolated data- that way we use ESMF and
        _some_ day this step can be done on-line (on the fly; Ben connection: when we get there). Relaxation can be interpreted as on _operator_...
 
-- gen_daily_clim/
+- gen_daily_clim_data/
 
   - Used for generating daily climatology, see script: [get_daily_clim_or_data.py](https://github.com/sanAkel/future_sst_fraci/blob/main/gen_daily_clim/get_daily_clim_or_data.py)
   - You need `cal_daily_clim.x` to be built, available from GEOS-ESM/GEOS_Util, 
@@ -36,7 +36,7 @@
   When it finishes clean, you will get a single netcdf file containing both SST and Ice concentation for your date of choice (e.g., `sst_ice_20230201.nc`).
 
   [plot_sst_ERROR.py](https://github.com/sanAkel/future_sst_fraci/blob/main/GMAO_OPS_bin_data/plot_sst_ERROR.py):
-  Apply the [land-sea mask generating using this](https://github.com/sanAkel/future_sst_fraci/blob/main/gen_daily_clim/make_clean_land_sea_mask.ipynb) and calculate differences.
+  Apply the [land-sea mask generating using this](https://github.com/sanAkel/future_sst_fraci/blob/main/gen_daily_clim_data/make_clean_land_sea_mask.ipynb) and calculate differences.
 
   **Note**: 
     1. Above `extract_day_SST_FRACI_eight.F90` can write out daily data in binary format, example usage: `extract_daily_sst_ice.x 2023 1 1 .true.`
