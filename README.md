@@ -41,4 +41,10 @@
   **Note**: 
     1. Above `extract_day_SST_FRACI_eight.F90` can write out daily data in binary format, example usage: `extract_daily_sst_ice.x 2023 1 1 .true.`
     2. Plot using grads: plot_{xx}.ctl, xx=sst, ice are provided in case one insists on working with binary data. (For plotting) I support nothing other than python and netcdf.
+
+- to_gen_new_files/
+
+  - To generate files in:
+    - Hindcast mode: `hindcast_data.py`
+    - Forecast mode: ??
     
