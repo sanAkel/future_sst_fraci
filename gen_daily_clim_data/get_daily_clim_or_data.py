@@ -42,7 +42,7 @@ else:
      year, mon, day = [dummy_dates[dd].year, dummy_dates[dd].month, dummy_dates[dd].day]
      # print(year, mon, day)
      cmd = to_exec + ' ' +\
-           '{} {} {} .true.'.format(year, mon, day)
+           '-year {} -month {} -day {} -save_bin'.format(year, mon, day)
      print(cmd)
      exit_code = os.system(cmd)
      if (exit_code != 0):
