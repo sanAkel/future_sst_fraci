@@ -1,68 +1,115 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import pandas as pd
 import xarray as xr
 import matplotlib.pyplot as plt
-#----
+
+# To apply land-sea mask
+land_sea_mask = xr.open_dataset("/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/gen_daily_clim_data/data/geos_fp_bcs_land_sea_mask.nc")
+my_mask = land_sea_mask.land_mask.values
+# --
+
+def get_files_names(dates, data_path, file_pref, file_suff, clim=False):
+   files_to_read = []
+   for idate in dates:
+
+     if (clim==False): # real data
+       ff = data_path + str(idate.year) + "/" +\
+            file_pref + str(idate.year) + str(idate.month).zfill(2) + str(idate.day).zfill(2) +\
+            file_suff
+     else:
+       ff = data_path + "/"+\
+            file_pref + "0001" + str(idate.month).zfill(2) + str(idate.day).zfill(2) +\
+            file_suff
+
+     #print(ff)
+     files_to_read.append(ff)
+   return files_to_read
 
 def apply_mask( input_field, mask, tol=0.1):
   output_field = np.copy( input_field)
   output_field [mask<tol] = np.nan
   return output_field
+# --
 
-# Pick a binned 1/8 deg grid file
-ds_geos = xr.open_dataset("data/" + "sst_fraci_20230101.nc4").squeeze()
-sst_geos=ds_geos.SST.values
-
-# Apply land-sea mask
-land_sea_mask = xr.open_dataset("/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/gen_daily_clim/data/geos_fp_bcs_land_sea_mask.nc")
-my_mask = land_sea_mask.land_mask.values
-#sst_masked=apply_mask(sst_geos, my_mask)
-#plt.pcolormesh(ds_geos.lon.values, ds_geos.lat.values, sst_masked), plt.colorbar(shrink=0.5)
-#plt.show()
-
-data_path_clim = "/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/data/ncFiles/"
+fcst_nDays, nfcst = [10, 30]
+start_date, end_date = ['2017-06-01', '2017-07-01'] # end_date must fit above.
 data_path_real = "/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/GMAO_OPS_bin_data/data/"
+data_path_clim = "/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/data/ncFiles/"
 
-ds_real = xr.open_mfdataset(data_path_real + "sst_fraci_*.nc4")
-ds_clim = xr.open_mfdataset(data_path_clim + "daily_clim_mean_sst_fraci_000101*.nc", concat_dim='time', combine='nested', use_cftime=True)
+file_pref_real, file_suff = ["sst_ice_", ".nc"]
+file_pref_clim, file_suff = ["daily_clim_mean_sst_fraci_", ".nc"]
+# --
 
-nT = ds_real.time.shape[0]
-mean_pers = np.zeros((nT,), dtype=np.float64)
-rmse_pers = np.zeros_like( mean_pers)
+exp_dates  = pd.date_range(start_date, end_date, freq='D')
 
-mean_clim = np.zeros_like( mean_pers)
-rmse_clim = np.zeros_like( mean_pers)
-# There is no point in working with ice, since coverage varies everyday!
+mean_error = np.zeros((fcst_nDays, nfcst), dtype=np.float64)
+sdev_error = np.zeros_like( mean_error)
+spatial_error = -999*np.ones((fcst_nDays, my_mask.shape[0], my_mask.shape[1]), dtype=np.float32)
 
-for id in range(0, nT):
-  daily_sst_real = ds_real.isel(time=id).SST.values
-  daily_sst_clim = ds_clim.isel(time=id).SST.values
+# with respect to daily climatology
+mean_error_clim = np.zeros((fcst_nDays, nfcst), dtype=np.float64)
+sdev_error_clim = np.zeros_like( mean_error_clim)
 
-  real_sst_masked=apply_mask(daily_sst_real, my_mask)
-  clim_sst_masked=apply_mask(daily_sst_clim, my_mask)
+for ifcst in range(1, nfcst+1):
+  #print("Forecast: ", ifcst)
+  fcst_start_date = exp_dates[0] + pd.DateOffset(days=ifcst-1)
+  fcst_dates = pd.date_range(start=fcst_start_date, periods=fcst_nDays)
+  print("Forecast Dates: ", fcst_dates)
+  #print(" ")
+  files_real_data = get_files_names(fcst_dates, data_path_real, file_pref_real, file_suff)
+  clim_files      = get_files_names(fcst_dates, data_path_clim, file_pref_clim, file_suff, True)
+  #print(files_real_data)
+  #print(clim_files)
+  #print(" ")
+  ds_real = xr.open_mfdataset(files_real_data)
+  ds_clim = xr.open_mfdataset(clim_files, concat_dim='time', combine='nested', use_cftime=True)
 
-  # Difference from persistence
-  if (id==0):
-    sst0 = real_sst_masked
+  for id in range(0, fcst_nDays):
 
-  dsst_pers = (real_sst_masked - sst0).flatten()
-  dsst_clim = (real_sst_masked - clim_sst_masked).flatten()
+    real_sst = ds_real.isel(time=id).SST.values
+    clim_sst = ds_clim.isel(time=id).SST.values
 
-  # unweighted.
-  mean_pers[id], rmse_pers[id] = [np.nanmean(dsst_pers, dtype=np.float64), np.nanstd(dsst_pers, dtype=np.float64)]
-  mean_clim[id], rmse_clim[id] = [np.nanmean(dsst_clim, dtype=np.float64), np.nanstd(dsst_clim, dtype=np.float64)]
+    real_sst_masked=apply_mask(real_sst, my_mask)
+    clim_sst_masked=apply_mask(clim_sst, my_mask)
+
+    # save initial SST
+    if (id==0):
+      sst0 = real_sst_masked
+
+    predicted_sst = sst0 # persistence throughout the forecast
+    dsst_error = (real_sst_masked - predicted_sst).flatten()
+    dsst_clim  = (real_sst_masked - clim_sst_masked).flatten() # use climatology as _best_ guess
+
+    if (ifcst ==1):
+      spatial_error[id,:,:] = (real_sst_masked - predicted_sst)
+    else:
+      spatial_error[id,:,:] = spatial_error[id,:,:] + (real_sst_masked - predicted_sst)
+
+    # unweighted global mean and std. dev.
+    mean_error[id,ifcst-1], sdev_error[id, ifcst-1] =\
+    [np.nanmean(dsst_error, dtype=np.float64), np.nanstd(dsst_error, dtype=np.float64)]
+
+    mean_error_clim[id,ifcst-1], sdev_error_clim[id, ifcst-1] =\
+    [np.nanmean(dsst_clim, dtype=np.float64), np.nanstd(dsst_clim, dtype=np.float64)]
+# --
+spatial_error = spatial_error/nfcst
+spatial_error[spatial_error < -900.] = np.nan
 
 plt.figure( figsize=(8, 4))
 plt.subplot(121)
-plt.plot(range(0, nT), mean_pers, 'b.-', label='Persistence')
-plt.plot(range(0, nT), mean_clim, 'g.-', label='Climatology')
-plt.legend()
+for id in range(0, fcst_nDays):
+  plt.plot(range(0, fcst_nDays), mean_error[:,id],      ls='-', c='b')
+  plt.plot(range(0, fcst_nDays), mean_error_clim[:,id], ls='-', c='k')
 plt.title('Global mean error ($^\circ$K)')
-
+plt.xlabel('Forecast days')
+#
 plt.subplot(122)
-plt.plot(range(0, nT), rmse_pers, 'b.-', label='Persistence')
-plt.plot(range(0, nT), rmse_clim, 'g.-', label='Climatology')
-#plt.legend()
-plt.title('RMSE ($^\circ$K)')
+for id in range(0, fcst_nDays):
+  plt.plot(range(0, fcst_nDays), sdev_error[:,id],      ls='-', c='b')
+  plt.plot(range(0, fcst_nDays), sdev_error_clim[:,id], ls='-', c='k')
+plt.title('SDEV of global mean error ($^\circ$K)')
+plt.xlabel('Forecast days')
+
 plt.show()
