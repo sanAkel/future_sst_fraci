@@ -76,9 +76,18 @@ for ifcst in range(1, nfcst+1):
 
     # save initial SST
     if (id==0):
-      sst0 = real_sst_masked
+      sst0  = real_sst_masked
+      anam0 = sst0 - clim_sst_masked 
 
-    predicted_sst = sst0 # persistence throughout the forecast
+    # --
+    #predicted_sst = sst0 # persistence throughout the forecast
+    # TRY 1: persist initial anomaly
+    if (id==0):
+      predicted_sst = sst0
+    else:
+      predicted_sst = clim_sst_masked + anam0
+    # --
+
     dsst_error = (real_sst_masked - predicted_sst).flatten()
     dsst_clim  = (real_sst_masked - clim_sst_masked).flatten() # use climatology as _best_ guess
 
@@ -112,4 +121,5 @@ for id in range(0, fcst_nDays):
 plt.title('SDEV of global mean error ($^\circ$K)')
 plt.xlabel('Forecast days')
 
-plt.show()
+#plt.show()
+plt.savefig('persistence_init_anom.png', dpi=60)
