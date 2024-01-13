@@ -2,3 +2,4 @@
 data_*/*
 *.nc
 *.bin
+*.csv
