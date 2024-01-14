@@ -3,7 +3,7 @@
 # Usage:
 # source g5_modules
 # ./hindcast_data.py
-# CHECK FOR OUTPUT, MOVE IT CONVENIENT LOCATION?
+# todo: CHECK FOR OUTPUT, MOVE TO CONVENIENT LOCATION?
 # --
 
 from pathlib import Path
