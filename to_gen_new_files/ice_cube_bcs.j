@@ -14,7 +14,7 @@ set echo
 #set outDir = $2
 #-- why above fails??
 set FVBIN = /discover/nobackup/sakella/geosMom6/v11.1.1/GEOSgcm/install/bin
-set outDir = /discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/to_gen_new_files/data_20170601_20170610_ice
+set outDir = /discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/to_gen_new_files/fcst_data_20230701_20230710_ice
 
 unset echo
 source $FVBIN/g5_modules
