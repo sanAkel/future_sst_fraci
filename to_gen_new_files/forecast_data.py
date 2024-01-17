@@ -15,6 +15,9 @@ import os
 
 # user inputs
 start_date, fcst_nDays = ['2023-07-01', 10]
+#method = "persistence"
+method = "persist_anomaly"
+
 #FVBIN = '/discover/nobackup/sakella/geosMom6/v11.1.1/GEOSgcm/install/bin'
 FVBIN = '/discover/nobackup/sakella/geosMom6/v11.1.1/GEOSgcm/build/bin'
 EXEC  = 'gen_forecast_bcs.x'
@@ -53,7 +56,7 @@ except OSError as error:
 os.chdir(workDir)
 # Generate lat-lon output
 cmd2 = FVBIN + '/' + EXEC +\
-      ' -year {} -month {} -day {} -fcst_nDays {}'.format(fcst_dates[0].year, fcst_dates[0].month, fcst_dates[0].day, fcst_nDays)
+      ' -year {} -month {} -day {} -fcst_nDays {} -method {}'.format(fcst_dates[0].year, fcst_dates[0].month, fcst_dates[0].day, fcst_nDays, method)
 exit_code2 = os.system(cmd2)
 
 # List all output files
