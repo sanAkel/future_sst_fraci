@@ -11,14 +11,14 @@
   
    - Denote by $\bar{x}(t_k)$
 
-2. :negative_squared_cross_mark: Script to create anomaly in SST, ice for any user input day (anomaly with respect to above daily climatology).
+2. :white_check_mark: Script to create anomaly in SST, ice for any user input day (anomaly with respect to above daily climatology).
  - Denote by $\delta x(t_k).$
 
 ```
 ... X X X X X X X X * | 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 ...... known (past)-->| future days after *
 ```
- 3. :negative_squared_cross_mark: Script to create _future_ SST, ice for 15-days into _future_ from any user input day.
+ 3. :white_check_mark: Script to create _future_ SST, ice for 15-days into _future_ from any user input day.
 
  ## Different approaches:
   - Persist anomaly of today into future (ECMWF, Kristian Mogensen): $x(t_{k+d}) = \bar{x}(t_{k+d}) + \delta x(t_k)$ for $d= 1, \ldots, 15.$
