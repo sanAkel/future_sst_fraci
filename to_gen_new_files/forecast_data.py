@@ -2,7 +2,10 @@
 
 # Usage:
 # source g5_modules
-# ./forecast_data.py
+# 1. Edit: start_date, fcst_nDays
+# 2. Edit ice_cube_bcs.j, sst_cube_bcs.j: FVBIN, outDir
+# 3. ./forecast_data.py
+#
 # todo: 
 # - Input args to to_cube_bcs.j
 # - CHECK FOR FINAL OUTPUT, MOVE TO CONVENIENT LOCATION?
@@ -14,12 +17,11 @@ import sys
 import os
 
 # user inputs
-start_date, fcst_nDays = ['2023-07-01', 10]
+start_date, fcst_nDays = ['2023-07-14', 15]
 #method = "persistence"
 method = "persist_anomaly"
 
-#FVBIN = '/discover/nobackup/sakella/geosMom6/v11.1.1/GEOSgcm/install/bin'
-FVBIN = '/discover/nobackup/sakella/geosMom6/v11.1.1/GEOSgcm/build/bin'
+FVBIN = '/discover/nobackup/sakella/geosMom6/develop_20Feb2024/install/bin'
 EXEC  = 'gen_forecast_bcs.x'
 
 # path where output will be written to-- a sub dir in this path will be created
