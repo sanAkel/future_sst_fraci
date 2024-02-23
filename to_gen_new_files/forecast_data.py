@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 # Usage:
-# source g5_modules
-# 1. Edit: start_date, fcst_nDays
-# 2. Edit ice_cube_bcs.j, sst_cube_bcs.j: FVBIN, outDir
+# 1. source g5_modules
+# 2. Edit: start_date, fcst_nDays
 # 3. ./forecast_data.py
 #
 # todo: 
@@ -15,6 +14,15 @@ from pathlib import Path
 import pandas as pd
 import sys
 import os
+# --
+
+def make_file_name(d_string, workDir, ice_pref, sst_pref):
+  dStr = str(d_string.year) + str(d_string.month).zfill(2) + str(d_string.day).zfill(2)
+  print(dStr)
+  ice_file = workDir+"/"+ ice_pref + dStr + suff
+  sst_file = workDir+"/"+ sst_pref + dStr + suff
+  return ice_file, sst_file
+# --
 
 # user inputs
 start_date, fcst_nDays = ['2023-07-14', 15]
@@ -23,6 +31,7 @@ method = "persist_anomaly"
 
 FVBIN = '/discover/nobackup/sakella/geosMom6/develop_20Feb2024/install/bin'
 EXEC  = 'gen_forecast_bcs.x'
+EXEC2x= 'extract_daily_sst_ice.x'
 
 # path where output will be written to-- a sub dir in this path will be created
 out_dir = '/discover/nobackup/projects/gmao/advda/sakella/future_sst_fraci/to_gen_new_files/'
@@ -35,6 +44,11 @@ ncFile_pref, ncFile_suff = ["sst_ice_", ".nc"]
 
 # Forecast dates
 fcst_dates = pd.date_range(start_date, periods=fcst_nDays, freq='D')
+
+# Past date - A single day from past is needed for GEOS ReadForcing and its interpolation/date bracketing to work
+last_date = pd.date_range(end=fcst_dates[0], periods=2, freq='D')[0]
+# --
+
 print("\nGenerate fcst data for:\n\n",fcst_dates)
 
 output_pref = str( fcst_dates[0].year) + str( fcst_dates[0].month).zfill(2) + str( fcst_dates[0].day).zfill(2)+'_'+\
@@ -57,20 +71,38 @@ except OSError as error:
 # Generate lat-lon files
 os.chdir(workDir)
 # Generate lat-lon output
+cmd2x = FVBIN + '/' + EXEC2x +\
+      ' -year {} -month {} -day {} -save_bin'.format(last_date.year, last_date.month, last_date.day)
+exit_code2x = os.system(cmd2x) # past (one) day
+
 cmd2 = FVBIN + '/' + EXEC +\
       ' -year {} -month {} -day {} -fcst_nDays {} -method {}'.format(fcst_dates[0].year, fcst_dates[0].month, fcst_dates[0].day, fcst_nDays, method)
-exit_code2 = os.system(cmd2)
+exit_code2 = os.system(cmd2)   # Present and future days
 
 # List all output files
 list_of_ice_files = []
 list_of_sst_files = []
 
+# Start with past date
+[ice_file, sst_file] = make_file_name(last_date, workDir, ice_pref, sst_pref)
+
+if(Path(ice_file).is_file()): # check file exists
+  list_of_ice_files.append( ice_file)
+else:
+  print("File does not exist: {}. Exiting.".format(ice_file))
+  sys.exit()
+
+if(Path(sst_file).is_file()): # check file exists
+  list_of_sst_files.append( sst_file)
+else:
+  print("File does not exist: {}. Exiting.".format(sst_file))
+  sys.exit()
+#
+# Next forecast dates
 for dd in fcst_dates:
   dStr = str(dd.year) + str(dd.month).zfill(2) + str(dd.day).zfill(2)
   #print(dStr)
-
-  ice_file = workDir+"/"+ ice_pref + dStr + suff
-  sst_file = workDir+"/"+ sst_pref + dStr + suff
+  [ice_file, sst_file] = make_file_name(dd, workDir, ice_pref, sst_pref)
 
   if(Path(ice_file).is_file()): # check file exists
     list_of_ice_files.append( ice_file)
@@ -94,6 +126,9 @@ sst_file_lat_lon = 'sst_2880x1440_' + output_pref + suff
 ice_cmd1 = '/usr/bin/cat ' + ' '.join(list_of_ice_files) + ' > ' + ice_file_lat_lon
 sst_cmd1 = '/usr/bin/cat ' + ' '.join(list_of_sst_files) + ' > ' + sst_file_lat_lon
 
+print(ice_cmd1)
+print(sst_cmd1)
+
 # 2. Commands to create rc file for lat-lon -> cube
 ice_cmd2 = out_dir + '/' + 'make_ICE_rcFile.csh ' +\
            ice_file_lat_lon +\
@@ -106,8 +141,8 @@ sst_cmd2 = out_dir + '/' + 'make_SST_rcFile.csh ' +\
            ' ' + workDir + '_sst'
 
 # 3. Command to sbatch
-ice_cmd3 = 'sbatch ' + out_dir + '/' + 'ice_cube_bcs.j' 
-sst_cmd3 = 'sbatch ' + out_dir + '/' + 'sst_cube_bcs.j'
+ice_cmd3 = 'sbatch ' + '--export=date_range={} '.format(output_pref) + out_dir + '/' + 'ice_cube_bcs.j' 
+sst_cmd3 = 'sbatch ' + '--export=date_range={} '.format(output_pref) + out_dir + '/' + 'sst_cube_bcs.j'
 
 #-- first ice
 output_dir = workDir + '_ice'
