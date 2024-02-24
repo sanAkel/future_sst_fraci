@@ -10,7 +10,9 @@
 # - CHECK FOR FINAL OUTPUT, MOVE TO CONVENIENT LOCATION?
 # --
 
+import argparse
 from pathlib import Path
+from datetime import datetime
 import pandas as pd
 import sys
 import os
@@ -25,9 +27,24 @@ def make_file_name(d_string, workDir, ice_pref, sst_pref):
 # --
 
 # user inputs
-start_date, fcst_nDays = ['2023-07-14', 15]
-#method = "persistence"
-method = "persist_anomaly"
+get_inputs = argparse.ArgumentParser(prog='\nforecast_data.py',\
+description='Generate SST and Ice concentration lower boundary\
+             condition for atmospheric forecasting.', usage='%(prog)s [options]')
+
+get_inputs.add_argument('--sdate', type=str,\
+                        metavar='date in yyyymmdd format (str)', required=True)
+
+get_inputs.add_argument('--fcst_nDays', type=int,\
+                        metavar='number of days (int)', default=15, help='default to 15 days')
+
+get_inputs.add_argument('--method', type=str,\
+                        metavar='which method of generating future data: persistence OR persist_anomaly', required=True)
+
+args = get_inputs.parse_args()
+
+start_date = datetime.strptime(str(args.sdate), '%Y%m%d')
+fcst_nDays = args.fcst_nDays
+method = args.method
 
 FVBIN = '/discover/nobackup/sakella/geosMom6/develop_20Feb2024/install/bin'
 EXEC  = 'gen_forecast_bcs.x'
